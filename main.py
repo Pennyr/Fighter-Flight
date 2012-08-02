@@ -101,6 +101,17 @@ class Sprite(QGraphicsPixmapItem):
         self.on_move()
         self.setPos(self.x, self.y)
         
+def getTransparentPix(fn):
+    pix = QPixmap(fn)
+    if pix.isNull():
+        print 'Error loading Plane pixmap'
+        return
+
+    bgcolor = QColor(pix.toImage().pixel(1,1))
+    mask = pix.createMaskFromColor(bgcolor)
+    pix.setMask(mask)
+    return pix
+
 class Bullet(Sprite):
     def __init__(self, x = 50, y = 100):
         super(Bullet,self).__init__(x,y)
@@ -115,7 +126,7 @@ class Enemy(Sprite):
     def __init__(self, x = 50, y = 100):
         super(Enemy,self).__init__(x,y)
     
-        pix = QPixmap("sprites/Multiple Views/MiG-X3.PNG")
+        pix = getTransparentPix("sprites/Multiple Views/MiG-X3.PNG")
         self.setPixmap(pix)
 
 
@@ -126,17 +137,9 @@ class Plane(Sprite):
         self.dirsPressed = [False for i in xrange(4)]
         self.cnt = [0,0]
 
-        pix = QPixmap("sprites/Multiple Views/F-22B.PNG")
-        if pix.isNull():
-            print 'Error loading Plane pixmap'
-            return
+        pix = getTransparentPix("sprites/Multiple Views/F-22B.PNG")
 
-        bgcolor = QColor(pix.toImage().pixel(1,1))
-        print 'bg', bgcolor
-        mask = pix.createMaskFromColor(bgcolor)
-        pix.setMask(mask)
-
-        t = QTransform ().rotate(-90)
+        t = QTransform().rotate(-90)
         pix = pix.transformed(t)
         w = pix.width() / 3
         self.width = w
