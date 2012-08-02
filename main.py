@@ -1,3 +1,5 @@
+#! /usr/bin/env python2.7
+
 import os, sys, datetime
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -19,6 +21,9 @@ class Canvas(QGraphicsScene):
         self.bgheight = self.bgs[0].pixmap().height()
         self.bgs[0].setPos(0, self.height() - self.bgheight)
         self.bgs[1].setPos(0, self.bgs[0].y() - self.bgheight)
+
+        fns = ["sounds/%s.wav" % x for x in ['battle004', 'rocket', 'shot']]
+        self.sounds = [QSound(fn) for fn in fns]
 
         self.scoreItem = self.addText('0', QFont('Times', 25, QFont.Bold))
         self.scoreItem.setZValue(1000.0)
@@ -78,6 +83,7 @@ class Canvas(QGraphicsScene):
                 self.addItem(bullet)
                 self.bullets.append(bullet)
                 self.fire_cnt = 0
+                self.sounds[2].play()
         elif self.missle_on:
             if self.missle_cnt >= 100:
                 #print 'FIRE'
@@ -85,6 +91,7 @@ class Canvas(QGraphicsScene):
                 self.addItem(bullet)
                 self.bullets.append(bullet)
                 self.missle_cnt = 0
+                self.sounds[1].play()
         self.fire_cnt += 1
         self.missle_cnt += 1
 
@@ -109,6 +116,7 @@ class Canvas(QGraphicsScene):
             if e.shouldRemove:
                 # TODO: create explosion animation
                 self.score += 100
+                self.sounds[0].play()
 
         self.enemies = self.removeSprites(self.enemies)
 
@@ -283,6 +291,7 @@ class Plane(Sprite):
     
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setApplicationName('Fighter-Flight')
     c = Canvas()
     w = QGraphicsView(c)
     w.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
