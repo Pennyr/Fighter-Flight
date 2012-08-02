@@ -127,6 +127,15 @@ class Plane(Sprite):
         self.cnt = [0,0]
 
         pix = QPixmap("sprites/Multiple Views/F-22B.PNG")
+        if pix.isNull():
+            print 'Error loading Plane pixmap'
+            return
+
+        bgcolor = QColor(pix.toImage().pixel(1,1))
+        print 'bg', bgcolor
+        mask = pix.createMaskFromColor(bgcolor)
+        pix.setMask(mask)
+
         t = QTransform ().rotate(-90)
         pix = pix.transformed(t)
         w = pix.width() / 3
